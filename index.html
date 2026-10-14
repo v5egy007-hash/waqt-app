@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>ابدأ اليوم</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#000000"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#000;--fg:#fff;--dim:rgba(255,255,255,.45);--line:rgba(255,255,255,.18);--glow:0 0 10px rgba(255,255,255,.9),0 0 24px rgba(255,255,255,.35);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;background:#000;color:#fff;font-family:'Tajawal','Segoe UI',Tahoma,sans-serif;font-weight:300;-webkit-tap-highlight-color:transparent}
+body{display:flex;justify-content:center}
+#app{width:100%;max-width:430px;min-height:100vh;padding:20px 18px 96px}
+h1{font-weight:800;font-size:34px;margin:6px 0 2px;letter-spacing:-.5px;text-shadow:0 0 22px rgba(255,255,255,.35)}
+h2{font-weight:500;font-size:18px;margin:30px 0 12px}
+p.sub{color:var(--dim);margin:0 0 18px;font-size:15px}
+.big{font-weight:200;font-size:76px;line-height:1;text-shadow:0 0 26px rgba(255,255,255,.5)}
+.bar{height:2px;background:var(--line);margin:14px 0 6px}.bar i{display:block;height:100%;background:#fff;box-shadow:var(--glow);transition:width .8s}
+.row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.row span.t{flex:1;transition:opacity .3s}.row.done .t{opacity:.4;text-decoration:line-through}
+.dot{width:22px;height:22px;border:1.5px solid #fff;background:transparent;border-radius:3px;cursor:pointer;flex:none;transition:all .35s}
+.dot.on{background:#fff;box-shadow:var(--glow)}
+.x{background:none;border:0;color:var(--dim);font-size:20px;cursor:pointer;padding:0 4px}
+input,textarea,select{background:#000;color:#fff;border:1px solid var(--line);border-radius:6px;padding:10px 12px;font:inherit;width:100%;outline:none;transition:border .3s,box-shadow .3s}
+input:focus,textarea:focus,select:focus{border-color:#fff;box-shadow:0 0 12px rgba(255,255,255,.25)}
+input[type=time]{width:auto;color-scheme:dark}
+textarea{min-height:150px;resize:vertical;line-height:1.9}
+.add{display:flex;gap:8px;margin-top:10px}.add select{width:auto}
+.btn{background:#fff;color:#000;border:0;border-radius:6px;padding:10px 16px;font:inherit;font-weight:800;cursor:pointer;flex:none}
+.btn.o{background:none;color:#fff;border:1px solid #fff}
+.grid{display:grid;grid-template-columns:repeat(19,1fr);gap:3px}
+.grid i{aspect-ratio:1;border:1px solid var(--line);border-radius:2px;transition:background .5s}
+.grid i.p{background:rgba(255,255,255,.75);border-color:transparent}
+.grid i.n{background:#fff;box-shadow:var(--glow);border-color:#fff;animation:pulse 2.4s infinite}
+@keyframes pulse{50%{box-shadow:0 0 3px #fff}}
+.cov{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.q{border:1px solid rgba(255,255,255,.55);border-radius:8px;padding:12px;box-shadow:0 0 14px rgba(255,255,255,.08) inset,0 0 14px rgba(255,255,255,.1);min-height:170px}
+.q h3{margin:0 0 2px;font-size:15px;font-weight:800}.q small{color:var(--dim);font-size:12px}
+.q .row{padding:7px 0;font-size:14px}.q input{margin-top:8px;padding:7px 9px;font-size:13px}
+.nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;background:rgba(0,0,0,.92);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);backdrop-filter:blur(10px);z-index:5}
+.nav div{display:flex;width:100%;max-width:430px}
+.nav button{flex:1;background:none;border:0;color:var(--dim);font:inherit;font-weight:500;padding:16px 0;cursor:pointer;transition:color .3s}
+.nav button.on{color:#fff;text-shadow:var(--glow)}
+.view{animation:in .35s}@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.log .d{color:var(--dim);margin:18px 0 4px;font-weight:500}.log .e{padding:8px 0;border-bottom:1px solid var(--line)}.log .e small{color:var(--dim);display:block}
+.hm{display:grid;grid-template-columns:repeat(14,1fr);gap:4px}.hm i{aspect-ratio:1;border:1px solid var(--line);border-radius:2px}
+.pr{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.toast{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:12px 20px;border-radius:8px;font-weight:800;box-shadow:var(--glow);z-index:9;max-width:90%}
+.em{color:var(--dim);padding:10px 0}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"><div id="view" class="view"></div></div>
+<nav class="nav"><div id="nav"></div></nav>
+<script>
+const LV={y:'سنوية',m:'شهرية',w:'أسبوعية',d:'يومية'};
+const QN={q1:['عاجل ومهم','نفّذ الآن'],q2:['مهم وغير عاجل','خطّط له'],q3:['عاجل وغير مهم','فوّض'],q4:['غير عاجل وغير مهم','قلّل منه']};
+const TABS=[['today','اليوم'],['time','الوقت'],['plan','خطط'],['log','سجل']];
+const DEF={goals:[],covey:{q1:[],q2:[],q3:[],q4:[]},hist:[],journal:{},food:{},alarms:[],review:{},
+prayers:{'الفجر':'05:00','الظهر':'12:00','العصر':'15:30','المغرب':'18:00','العشاء':'19:30'},pOn:{}};
+let S;try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem('waqt')||'{}'))}catch(e){S=JSON.parse(JSON.stringify(DEF))}
+const save=()=>{try{localStorage.setItem('waqt',JSON.stringify(S))}catch(e){}};
+const $=s=>document.querySelector(s),p2=n=>String(n).padStart(2,'0');
+const dk=d=>`${d.getFullYear()}-${p2(d.getMonth()+1)}-${p2(d.getDate())}`;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+let tab='today';
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.append(t);setTimeout(()=>t.remove(),4500)}
+function find(id){for(const g of S.goals)if(g.id==id)return[g,LV[g.l]+' · أهداف'];
+ for(const q in S.covey)for(const g of S.covey[q])if(g.id==id)return[g,'مصفوفة كوفي · '+QN[q][0]];return[]}
+function toggle(id){const[it,sec]=find(id);if(!it)return;it.done=!it.done;
+ if(it.done){const n=new Date();S.hist.push({id,date:dk(n),time:n.toTimeString().slice(0,8),title:it.t,section:sec})}
+ else{const i=S.hist.map(h=>h.id).lastIndexOf(id);if(i>-1)S.hist.splice(i,1)}save();render()}
+const dot=it=>`<button class="dot ${it.done?'on':''}" data-a="tg" data-id="${it.id}" aria-label="إنجاز"></button>`;
+const rowH=(it,k)=>`<div class="row ${it.done?'done':''}">${dot(it)}<span class="t">${esc(it.t)}</span><button class="x" data-a="del" data-k="${k}" data-id="${it.id}">×</button></div>`;
+function time(){const n=new Date(),y=n.getFullYear(),s=new Date(y,0,1),e=new Date(y+1,0,1),tot=Math.round((e-s)/864e5),d=Math.floor((n-s)/864e5)+1;
+ const pc=d/tot*100;let g='';for(let i=1;i<=tot;i++)g+=`<i class="${i<d?'p':i==d?'n':''}"></i>`;
+ return `<h1>لا تنتظر.. ابدأ اليوم</h1><p class="sub">اليوم ${d} من ${tot} في سنة ${y}</p>
+ <div class="big">${pc.toFixed(1)}%</div><div class="bar"><i style="width:${pc}%"></i></div>
+ <p class="sub">انقضى ${d} يوماً، وبقي ${tot-d} يوماً (${(100-pc).toFixed(1)}%)</p><div class="grid">${g}</div>`}
+function today(){const n=new Date(),k=dk(n),ds=S.goals.filter(g=>g.l=='d'),fd=S.food[k]||[],kc=fd.reduce((a,f)=>a+(+f.c||0),0);
+ return `<h1>اليوم</h1><p class="sub">${n.toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'})}</p>
+ <h2>المهام اليومية</h2>${ds.map(g=>rowH(g,'goals')).join('')||'<div class="em">أضف أول مهمة ليومك.</div>'}
+ <div class="add"><input id="nd" placeholder="مهمة جديدة"><button class="btn" data-a="addd">أضف</button></div>
+ <h2>المذكرة</h2><textarea data-a="jr" placeholder="اكتب خواطرك وملاحظاتك...">${esc(S.journal[k]||'')}</textarea>
+ <h2>الوجبات${kc?` · ${kc} سعرة`:''}</h2>${fd.map((f,i)=>`<div class="row"><span class="t">${esc(f.t)}${f.c?` <small style="color:var(--dim)">${esc(f.c)}</small>`:''}</span><button class="x" data-a="df" data-i="${i}">×</button></div>`).join('')}
+ <div class="add"><input id="ft" placeholder="الوجبة"><input id="fc" type="number" placeholder="سعرات" style="width:90px"><button class="btn" data-a="af">أضف</button></div>
+ <h2>الصلوات</h2>${Object.entries(S.prayers).map(([n,t])=>`<div class="pr"><span>${n}</span><input type="time" value="${t}" data-a="pt" data-n="${n}"><button class="dot ${S.pOn[n]?'on':''}" data-a="po" data-n="${n}" aria-label="تنبيه"></button></div>`).join('')}
+ <h2>منبهات مخصصة</h2>${S.alarms.map(a=>`<div class="pr"><span>${esc(a.t)}</span><input type="time" value="${a.time}" data-a="at" data-id="${a.id}"><button class="dot ${a.on?'on':''}" data-a="ao" data-id="${a.id}"></button><button class="x" data-a="ad" data-id="${a.id}">×</button></div>`).join('')}
+ <div class="add"><input id="an" placeholder="نوم، استيقاظ، تذكير..."><input id="atm" type="time" value="22:30"><button class="btn" data-a="aa">أضف</button></div>
+ <div class="add"><button class="btn o" data-a="perm">تفعيل إشعارات المتصفح</button></div>`}
+function plan(){const gs=['y','m','w'].map(l=>`<h2>أهداف ${LV[l]}</h2>${S.goals.filter(g=>g.l==l).map(g=>rowH(g,'goals')).join('')||'<div class="em">لا أهداف بعد.</div>'}`).join('');
+ return `<h1>خطط</h1><p class="sub">من السنة إلى الأسبوع، ثم اليوم.</p>
+ <div class="add"><select id="gl">${Object.entries(LV).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}</select><input id="gt" placeholder="هدف جديد"><button class="btn" data-a="ag">أضف</button></div>${gs}
+ <h2>مصفوفة كوفي</h2><div class="cov">${Object.keys(QN).map(q=>`<div class="q"><h3>${QN[q][0]}</h3><small>${QN[q][1]}</small>${S.covey[q].map(g=>rowH(g,'covey:'+q)).join('')}<input data-a="cq" data-q="${q}" placeholder="+ مهمة"></div>`).join('')}</div>`}
+function wk(){const n=new Date();n.setDate(n.getDate()-n.getDay());return dk(n)}
+function log(){const w=wk(),rv=S.review[w]||{},cnt={};S.hist.forEach(h=>cnt[h.date]=(cnt[h.date]||0)+1);
+ let hm='';for(let i=55;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const c=cnt[dk(d)]||0;hm+=`<i style="background:rgba(255,255,255,${c?Math.min(.25+c*.2,1):0});${c>2?'box-shadow:0 0 8px #fff':''}"></i>`}
+ const wc=S.hist.filter(h=>h.date>=w).length,by={};[...S.hist].reverse().forEach(h=>(by[h.date]=by[h.date]||[]).push(h));
+ return `<h1>سجل</h1><p class="sub">أرشيف إنجازاتك.</p><div class="hm">${hm}</div>
+ <h2>مراجعة الأسبوع · ${wc} إنجازاً</h2>
+ ${[['w1','ما الذي سار جيداً؟'],['w2','ما الذي عطّلني؟'],['w3','كيف أعدّل المسار الأسبوع القادم؟']].map(([k,l])=>`<p class="sub" style="margin:10px 0 4px">${l}</p><textarea style="min-height:80px" data-a="rv" data-k="${k}">${esc(rv[k]||'')}</textarea>`).join('')}
+ <h2>التاريخ</h2><div class="log">${Object.entries(by).map(([d,a])=>`<div class="d">${d}</div>${a.map(h=>`<div class="e">${esc(h.title)}<small>${h.time} · ${esc(h.section)}</small></div>`).join('')}`).join('')||'<div class="em">أنجز أول مهمة لتظهر هنا.</div>'}</div>`}
+function render(){$('#nav').innerHTML=TABS.map(([k,l])=>`<button class="${k==tab?'on':''}" data-a="tab" data-k="${k}">${l}</button>`).join('');
+ const v=$('#view');v.innerHTML={today,time,plan,log}[tab]();v.classList.remove('view');void v.offsetWidth;v.classList.add('view')}
+function add(list,t,extra){t=t.trim();if(!t)return;list.push(Object.assign({id:uid(),t,done:false},extra));save();render()}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,d=b.dataset,k=dk(new Date());
+ if(a=='tab'){tab=d.k;render();scrollTo(0,0)}
+ else if(a=='tg')toggle(d.id);
+ else if(a=='del'){const l=d.k.startsWith('covey')?S.covey[d.k.split(':')[1]]:S[d.k];l.splice(l.findIndex(x=>x.id==d.id),1);save();render()}
+ else if(a=='addd')add(S.goals,$('#nd').value,{l:'d'});
+ else if(a=='ag')add(S.goals,$('#gt').value,{l:$('#gl').value});
+ else if(a=='af'){const t=$('#ft').value.trim();if(t){(S.food[k]=S.food[k]||[]).push({t,c:$('#fc').value});save();render()}}
+ else if(a=='df'){S.food[k].splice(+d.i,1);save();render()}
+ else if(a=='po'){S.pOn[d.n]=!S.pOn[d.n];save();render();if(S.pOn[d.n])perm()}
+ else if(a=='ao'){const x=S.alarms.find(z=>z.id==d.id);x.on=!x.on;save();render()}
+ else if(a=='ad'){S.alarms=S.alarms.filter(z=>z.id!=d.id);save();render()}
+ else if(a=='aa'){const t=$('#an').value.trim();if(t){S.alarms.push({id:uid(),t,time:$('#atm').value,on:true});save();render();perm()}}
+ else if(a=='perm')perm(true)});
+document.addEventListener('keydown',e=>{if(e.key=='Enter'&&e.target.dataset.a=='cq'){add(S.covey[e.target.dataset.q],e.target.value)}});
+document.addEventListener('change',e=>{const d=e.target.dataset,a=d.a;
+ if(a=='pt'){S.prayers[d.n]=e.target.value;save()}
+ else if(a=='at'){S.alarms.find(z=>z.id==d.id).time=e.target.value;save()}});
+document.addEventListener('input',e=>{const d=e.target.dataset,a=d.a;
+ if(a=='jr'){S.journal[dk(new Date())]=e.target.value;save()}
+ else if(a=='rv'){const w=wk();(S.review[w]=S.review[w]||{})[d.k]=e.target.value;save()}});
+function perm(f){try{if('Notification' in window&&Notification.permission=='default')Notification.requestPermission();else if(f)toast('الإشعارات مفعّلة أو غير مدعومة في هذا المتصفح')}catch(e){}}
+const fired={};
+function notify(m){toast(m);try{if('Notification' in window&&Notification.permission=='granted')new Notification('ابدأ اليوم',{body:m})}catch(e){}}
+setInterval(()=>{const n=new Date(),hm=p2(n.getHours())+':'+p2(n.getMinutes()),k=dk(n)+hm;
+ Object.entries(S.prayers).forEach(([nm,t])=>{if(S.pOn[nm]&&t==hm&&!fired['p'+nm+k]){fired['p'+nm+k]=1;notify('حان وقت صلاة '+nm)}});
+ S.alarms.forEach(a=>{if(a.on&&a.time==hm&&!fired[a.id+k]){fired[a.id+k]=1;notify(a.t)}})},15000);
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+render();
+</script>
+</body>
+</html>
